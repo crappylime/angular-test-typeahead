@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { Observable } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+
+import { SearchService } from './search.service';
 
 @Component({
   selector: 'app-search',
@@ -11,25 +13,20 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class SearchComponent implements OnInit {
   myControl = new FormControl();
-  options: string[] = ['Thirteen', 'Thousand', 'Fifteen', 'Hundred', 'Million'];
-  filteredOptions: Observable<string[]>;
+  filteredOptions$: Observable<string[]>;
+
+  constructor(private service: SearchService) { }
 
   ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges
+    this.filteredOptions$ = this.myControl.valueChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        map((value: string) =>
+        switchMap((value: string) =>
           value.length < 2
-            ? []
-            : this._filter(value)
+            ? of([])
+            : this.service.searchWords(value.toLowerCase())
         ),
       );
-  }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 }
