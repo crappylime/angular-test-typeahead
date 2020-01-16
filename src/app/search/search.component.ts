@@ -1,23 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  selector: 'typeahead-example',
-  templateUrl: 'typeahead-example.component.html',
-  styleUrls: ['typeahead-example.component.scss'],
+  selector: 'app-search',
+  templateUrl: 'search.component.html',
+  styleUrls: ['search.component.scss'],
 })
-export class TypeaheadExampleComponent implements OnInit {
+export class SearchComponent implements OnInit {
   myControl = new FormControl();
-  options: string[] = ['One', 'Two', 'Three'];
+  options: string[] = ['Thirteen', 'Thousand', 'Fifteen', 'Hundred', 'Million'];
   filteredOptions: Observable<string[]>;
 
   ngOnInit() {
     this.filteredOptions = this.myControl.valueChanges
       .pipe(
-        startWith(''),
-        map(value => this._filter(value))
+        debounceTime(300),
+        distinctUntilChanged(),
+        map((value: string) =>
+          value.length < 2
+            ? []
+            : this._filter(value)
+        ),
       );
   }
 

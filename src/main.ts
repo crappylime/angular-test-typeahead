@@ -1,34 +1,20 @@
 import './polyfills';
 
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-
-import { TypeaheadExampleComponent } from './app/typeahead-example.component';
+import { SearchModule } from './app/search/search.module';
+import { AppComponent } from './app/app.component';
 
 @NgModule({
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    ReactiveFormsModule
+    SearchModule
   ],
-  entryComponents: [TypeaheadExampleComponent],
-  declarations: [TypeaheadExampleComponent],
-  bootstrap: [TypeaheadExampleComponent],
-  providers: []
+  entryComponents: [AppComponent],
+  declarations: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
 
