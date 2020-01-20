@@ -44,25 +44,45 @@ describe('SearchComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('waits 300 ms after the last typed character', fakeAsync(() => {
-      spyOn(service, 'searchWords').and.returnValue(of(['tech talk']));
-      const inputTextArray = ['t', 'te', 'tec'];
-      const textMock$: Observable<string> = interval(100).pipe(
-        take(3),
-        map(index => inputTextArray[index])
-      );
+    describe('if user has been typing chars', () => {
+      it('with breaks shorter than 300ms then call the service once', fakeAsync(() => {
+        spyOn(service, 'searchWords').and.returnValue(of(['tech talk']));
+        const inputTextArray = ['te', 'tec', 'tech'];
+        const textMock$: Observable<string> = interval(100).pipe(
+          take(3),
+          map(index => inputTextArray[index])
+        );
 
-      textMock$.subscribe(char => {
-        htmlInput.value = char;
-        htmlInput.dispatchEvent(new Event('input'));
-      });
-      tick(600);
-      fixture.detectChanges();
+        textMock$.subscribe(char => {
+          htmlInput.value = char;
+          htmlInput.dispatchEvent(new Event('input'));
+        });
+        tick(3 * 100 + 300);
+        fixture.detectChanges();
 
-      expect(service.searchWords).toHaveBeenCalledTimes(1);
-    }));
+        expect(service.searchWords).toHaveBeenCalledTimes(1);
+      }));
 
-    it('waits 2 ms after the last typed character', () => {
+      it('with breaks greater than 300ms then call the service 3x times', fakeAsync(() => {
+        spyOn(service, 'searchWords').and.returnValue(of(['tech talk']));
+        const inputTextArray = ['te', 'tec', 'tech'];
+        const textMock$: Observable<string> = interval(301).pipe(
+          take(3),
+          map(index => inputTextArray[index])
+        );
+
+        textMock$.subscribe(char => {
+          htmlInput.value = char;
+          htmlInput.dispatchEvent(new Event('input'));
+        });
+        tick(3 * 301 + 300);
+        fixture.detectChanges();
+
+        expect(service.searchWords).toHaveBeenCalledTimes(3);
+      }));
+    });
+
+    it('is not calling the service if the same value has been typed again', () => {
       expect(component).toBeTruthy();
     });
 
