@@ -33,53 +33,51 @@ describe('SearchComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('search words', () => {
+  describe('#ngOnInit', () => {
     let htmlInput: HTMLInputElement;
 
     beforeEach(() => {
       htmlInput = fixture.nativeElement.querySelector('input');
     });
 
-    it('begins search with min 2 characters', () => {
-      expect(component).toBeTruthy();
-    });
-
-    describe('if user has been typing chars', () => {
+    describe('when user types', () => {
       const test = (
         description: string,
-        intervalTime: number,
+        typedText: string[],
         expectedNumberOfCalls: number,
-        debounceTimeValue = 300
+        intervalTime = 100
       ) => {
-        it(`with ${description} than ${debounceTimeValue}ms then call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
-          const numberOfUserChanges = 3;
+        it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
+          const debounceTimeValue = 300;
           spyOn(service, 'searchWords').and.returnValue(of(['tech talk']));
-          const inputTextArray = ['te', 'tec', 'tech'];
-          const textMock$: Observable<string> = interval(intervalTime).pipe(
-            take(numberOfUserChanges),
-            map(index => inputTextArray[index])
+          const typedTextMock$: Observable<string> = interval(intervalTime).pipe(
+            take(typedText.length),
+            map(index => typedText[index])
           );
 
-          textMock$.subscribe(char => {
-            htmlInput.value = char;
+          typedTextMock$.subscribe(chars => {
+            htmlInput.value = chars;
             htmlInput.dispatchEvent(new Event('input'));
           });
-          tick(numberOfUserChanges * intervalTime + debounceTimeValue);
+          tick(typedText.length * intervalTime + debounceTimeValue);
           fixture.detectChanges();
 
           expect(service.searchWords).toHaveBeenCalledTimes(expectedNumberOfCalls);
         }));
       };
 
-      test('breaks that are shorter', 100, 1);
-      test('breaks that are greater', 301, 3);
-    });
-
-    it('is not calling the service if the same value has been typed again', () => {
-      expect(component).toBeTruthy();
+      test('quickly', ['te', 'tec', 'tech'], 1);
+      test('slowly', ['te', 'tec', 'tech'], 3, 400);
+      test('quickly only one char', ['t'], 0);
+      test('slowly two chars', ['t', 'te'], 1, 400);
+      test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
     });
 
     it('displays an alert when no matches were found', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('displays a spinner while loading results', () => {
       expect(component).toBeTruthy();
     });
   });
