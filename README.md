@@ -14,10 +14,11 @@ Check out this project on [stackblitz](https://stackblitz.com/github/crappylime/
   - [Motivation](#motivation)
   - [Built With](#built-with)
   - [Getting Started](#getting-started)
-  - [Triggering events on elements](#triggering-events-on-elements)
+  - [Components with inputs and outputs](#triggering-events-on-elements)
   - [Async tests](#async-tests)
   - [Interacting with Input Boxes](#interacting-with-input-boxes)
   - [Test 'cases' pattern](#test-cases-pattern)
+  - [Page object](#page-object)
   - [License](#license)
   - [Credits](#credits)
 
@@ -72,17 +73,24 @@ Check out this project on [stackblitz](https://stackblitz.com/github/crappylime/
     ```
 </details>
 
-## Triggering events on elements
+## [Components with inputs and outputs](https://angular.io/guide/testing#component-with-inputs-and-outputs)
 
-## Async tests
+Triggering events on elements:
+- `triggerEventHandler(eventName: string, eventObj: event)`
+- `dispatchEvent(event: Event)`
+- `click()`
 
-- **fakeAsync vs async**
+## [Async tests](https://angular.io/guide/testing#component-with-async-service)
 
-- **tick vs flush**
+- **fakeAsync + tick / flush**
+
+- **async + whenStable**
 
 ## Interacting with Input Boxes
 
-## Test 'cases' pattern
+## [Test 'cases' pattern](https://blog.angularindepth.com/how-i-was-completely-wrong-about-setting-up-tearing-down-tests-d3f6501d1718)
+
+## [Page object](https://angular.io/guide/testing#use-a-page-object)
 
 ## License
 
