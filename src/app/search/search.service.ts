@@ -9,17 +9,17 @@ import { map } from 'rxjs/operators';
 })
 export class SearchService {
 
-  private url = 'https://api.datamuse.com/sug';
+  private url = 'http://api.dataatwork.org/v1/jobs';
 
   constructor(private http: HttpClient) { }
 
-  searchWords(term: string): Observable<string[]> {
+  searchTitles(term: string): Observable<string[]> {
     return this.http
-      .get<{ word: string, score: number }[]>(this.url, {
-        params: new HttpParams().set('s', term)
+      .get<{ suggestion: string }[]>(`${this.url}/autocomplete`, {
+        params: new HttpParams().set('contains', term)
       })
       .pipe(
-        map(response => response.map(obj => obj.word))
+        map(response => response.map(obj => obj.suggestion))
       );
   }
 

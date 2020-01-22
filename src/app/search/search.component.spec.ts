@@ -13,7 +13,7 @@ describe('SearchComponent', () => {
   let service: SearchService;
 
   const searchServiceStub: Partial<SearchService> = {
-    searchWords: () => of([])
+    searchTitles: () => of([])
   };
 
   beforeEach(async(() => {
@@ -49,7 +49,7 @@ describe('SearchComponent', () => {
       ) => {
         it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
           const debounceTimeValue = 300;
-          spyOn(service, 'searchWords').and.returnValue(of(['tech talk']));
+          spyOn(service, 'searchTitles').and.returnValue(of(['Chief Technical Officer']));
           const typedTextMock$: Observable<string> = interval(intervalTime).pipe(
             take(typedText.length),
             map(index => typedText[index])
@@ -62,7 +62,7 @@ describe('SearchComponent', () => {
           tick(typedText.length * intervalTime + debounceTimeValue);
           fixture.detectChanges();
 
-          expect(service.searchWords).toHaveBeenCalledTimes(expectedNumberOfCalls);
+          expect(service.searchTitles).toHaveBeenCalledTimes(expectedNumberOfCalls);
         }));
       };
 

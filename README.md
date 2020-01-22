@@ -99,4 +99,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Credits
 
 * [Angular Testing Guide](https://angular.io/guide/testing)
+* Open Skills API from [Data At Work](http://dataatwork.org/)
 * test 'cases' pattern from [Zack DeRose](https://blog.angularindepth.com/how-i-was-completely-wrong-about-setting-up-tearing-down-tests-d3f6501d1718)

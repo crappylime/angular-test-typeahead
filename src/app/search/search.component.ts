@@ -12,20 +12,20 @@ import { SearchService } from './search.service';
   styleUrls: ['search.component.scss'],
 })
 export class SearchComponent implements OnInit {
-  myControl = new FormControl();
-  filteredOptions$: Observable<string[]>;
+  searchControl = new FormControl();
+  titles$: Observable<string[]>;
 
   constructor(private service: SearchService) { }
 
   ngOnInit() {
-    this.filteredOptions$ = this.myControl.valueChanges
+    this.titles$ = this.searchControl.valueChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
         switchMap((value: string) =>
           value.length < 2
             ? of([])
-            : this.service.searchWords(value.toLowerCase())
+            : this.service.searchTitles(value.toLowerCase())
         ),
       );
   }
