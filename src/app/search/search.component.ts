@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+import { MatOption } from '@angular/material/core';
 import { Observable, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { SearchService } from './search.service';
 
@@ -16,6 +17,8 @@ export class SearchComponent implements OnInit {
   searchControl = new FormControl();
   titles$: Observable<string[]>;
 
+  private readonly noResultsMessage = 'No results';
+
   constructor(private service: SearchService) { }
 
   ngOnInit() {
@@ -25,12 +28,20 @@ export class SearchComponent implements OnInit {
         distinctUntilChanged(),
         tap(() => this.isLoading = true),
         switchMap((value: string) =>
-          value.length < 2
+          !value || value.length < 2
             ? of([])
-            : this.service.searchTitles(value.toLowerCase())
+            : this.service.searchTitles(value.toLowerCase()).pipe(
+              catchError(() => of([this.noResultsMessage]))
+            )
         ),
-        tap(() => this.isLoading = false),
-        finalize(() => this.isLoading = false)
+        tap(() => this.isLoading = false)
       );
+  }
+
+  onSelectedOption(option: MatOption, title: string) {
+    if (title === this.noResultsMessage) {
+      option.deselect();
+      this.searchControl.reset();
+    }
   }
 }
