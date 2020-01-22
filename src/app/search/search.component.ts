@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { Observable, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, switchMap, tap } from 'rxjs/operators';
 
 import { SearchService } from './search.service';
 
@@ -12,6 +12,7 @@ import { SearchService } from './search.service';
   styleUrls: ['search.component.scss'],
 })
 export class SearchComponent implements OnInit {
+  isLoading = false;
   searchControl = new FormControl();
   titles$: Observable<string[]>;
 
@@ -22,11 +23,14 @@ export class SearchComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
+        tap(() => this.isLoading = true),
         switchMap((value: string) =>
           value.length < 2
             ? of([])
             : this.service.searchTitles(value.toLowerCase())
         ),
+        tap(() => this.isLoading = false),
+        finalize(() => this.isLoading = false)
       );
   }
 }

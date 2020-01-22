@@ -1,7 +1,8 @@
 <div class="search-form">
-    <mat-form-field class="full-width">
-        <input type="text" placeholder="Pick one" aria-label="Title" matInput [formControl]="searchControl"
+    <mat-form-field class="half-width">
+        <input type="text" placeholder="Search job titles" aria-label="Title" matInput [formControl]="searchControl"
             [matAutocomplete]="auto">
+        <mat-spinner matSuffix *ngIf="isLoading" diameter="17"></mat-spinner>
         <mat-autocomplete #auto="matAutocomplete">
             <mat-option *ngFor="let title of titles$ | async" [value]="title">
                 {{title}}
