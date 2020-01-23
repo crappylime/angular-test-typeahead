@@ -1,8 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { MatOption } from '@angular/material/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { SearchService } from './search.service';
@@ -13,11 +13,11 @@ import { SearchService } from './search.service';
   styleUrls: ['search.component.scss'],
 })
 export class SearchComponent implements OnInit {
+  readonly noResultsMessage = 'No results';
+
   isLoading = false;
   searchControl = new FormControl();
   titles$: Observable<string[]>;
-
-  private readonly noResultsMessage = 'No results';
 
   constructor(private service: SearchService) { }
 
@@ -31,17 +31,10 @@ export class SearchComponent implements OnInit {
           !value || value.length < 2
             ? of([])
             : this.service.searchTitles(value.toLowerCase()).pipe(
-              catchError(() => of([this.noResultsMessage]))
+              catchError((error: HttpErrorResponse) => error.status === 404 ? of([this.noResultsMessage]) : throwError(error))
             )
         ),
         tap(() => this.isLoading = false)
       );
-  }
-
-  onSelectedOption(option: MatOption, title: string) {
-    if (title === this.noResultsMessage) {
-      option.deselect();
-      this.searchControl.reset();
-    }
   }
 }
