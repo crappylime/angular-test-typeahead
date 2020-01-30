@@ -8,19 +8,15 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class SearchService {
-
   private url = 'http://api.dataatwork.org/v1/jobs';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   searchTitles(term: string): Observable<string[]> {
     return this.http
       .get<{ suggestion: string }[]>(`${this.url}/autocomplete`, {
         params: new HttpParams().set('contains', term)
       })
-      .pipe(
-        map(response => response.map(obj => obj.suggestion))
-      );
+      .pipe(map(response => response.map(obj => obj.suggestion)));
   }
-
 }

@@ -1,4 +1,10 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick
+} from '@angular/core/testing';
 
 import { Observable, interval, of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
@@ -19,11 +25,8 @@ describe('SearchComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [SearchModule],
-      providers: [
-        { provide: SearchService, useValue: searchServiceStub }
-      ]
-    })
-      .compileComponents();
+      providers: [{ provide: SearchService, useValue: searchServiceStub }]
+    }).compileComponents();
     service = TestBed.get(SearchService);
   }));
 
@@ -49,8 +52,12 @@ describe('SearchComponent', () => {
       ) => {
         it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
           const debounceTimeValue = 300;
-          spyOn(service, 'searchTitles').and.returnValue(of(['Chief Technical Officer']));
-          const typedTextMock$: Observable<string> = interval(intervalTime).pipe(
+          spyOn(service, 'searchTitles').and.returnValue(
+            of(['Chief Technical Officer'])
+          );
+          const typedTextMock$: Observable<string> = interval(
+            intervalTime
+          ).pipe(
             take(typedText.length),
             map(index => typedText[index])
           );
@@ -62,7 +69,9 @@ describe('SearchComponent', () => {
           tick(typedText.length * intervalTime + debounceTimeValue);
           fixture.detectChanges();
 
-          expect(service.searchTitles).toHaveBeenCalledTimes(expectedNumberOfCalls);
+          expect(service.searchTitles).toHaveBeenCalledTimes(
+            expectedNumberOfCalls
+          );
         }));
       };
 
