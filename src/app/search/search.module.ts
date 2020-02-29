@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
-import { SearchComponent } from './search.component';
+import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
   imports: [

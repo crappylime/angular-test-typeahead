@@ -10,8 +10,8 @@ import { Observable, interval, of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 
 import { SearchComponent } from './search.component';
-import { SearchModule } from './search.module';
-import { SearchService } from './search.service';
+import { SearchModule } from '../../search.module';
+import { SearchService } from '../../search.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;

@@ -11,7 +11,7 @@ import {
   tap
 } from 'rxjs/operators';
 
-import { SearchService } from './search.service';
+import { SearchService } from '../../search.service';
 
 @Component({
   selector: 'app-search',
