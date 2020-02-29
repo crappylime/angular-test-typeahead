@@ -2,14 +2,26 @@
   <mat-form-field class="half-width">
     <input
       type="text"
-      placeholder="Search job titles"
-      aria-label="Title"
+      placeholder="Search for job titles"
+      aria-label="Search"
       matInput
       [formControl]="searchControl"
       [matAutocomplete]="auto"
     />
-    <mat-spinner matSuffix *ngIf="isLoading" diameter="17"></mat-spinner>
+    <button
+      mat-button
+      *ngIf="searchControl.value"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="searchControl.setValue('')"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
     <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngIf="isLoading">
+        <mat-spinner diameter="17"></mat-spinner>
+      </mat-option>
       <mat-option
         *ngFor="let title of titles$ | async"
         [value]="title"
