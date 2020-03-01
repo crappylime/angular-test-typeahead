@@ -14,7 +14,7 @@
       matSuffix
       mat-icon-button
       aria-label="Clear"
-      (click)="searchControl.setValue('')"
+      (click)="clear()"
     >
       <mat-icon>close</mat-icon>
     </button>
@@ -23,12 +23,14 @@
         <mat-spinner diameter="17"></mat-spinner>
       </mat-option>
       <mat-option
-        *ngFor="let title of titles$ | async"
-        [value]="title"
-        [disabled]="title === noResultsMessage"
+        *ngFor="let job of jobs$ | async"
+        [value]="job.suggestion"
+        [disabled]="job.suggestion === noResultsMessage"
+        (click)="jobId = job.uuid"
       >
-        {{ title }}
+        {{ job.suggestion }}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 </div>
+<app-skills *ngIf="jobId" [jobId]="jobId"></app-skills>

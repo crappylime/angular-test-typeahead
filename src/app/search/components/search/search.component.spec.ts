@@ -9,6 +9,7 @@ import {
 import { Observable, interval, of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 
+import { Job } from '../../models/job.model';
 import { SearchComponent } from './search.component';
 import { SearchModule } from '../../search.module';
 import { SearchService } from '../../search.service';
@@ -19,7 +20,7 @@ describe('SearchComponent', () => {
   let service: SearchService;
 
   const searchServiceStub: Partial<SearchService> = {
-    searchTitles: () => of([])
+    searchJobs: () => of([])
   };
 
   beforeEach(async(() => {
@@ -27,7 +28,7 @@ describe('SearchComponent', () => {
       imports: [SearchModule],
       providers: [{ provide: SearchService, useValue: searchServiceStub }]
     }).compileComponents();
-    service = TestBed.get(SearchService);
+    service = TestBed.inject(SearchService);
   }));
 
   beforeEach(() => {
@@ -52,8 +53,8 @@ describe('SearchComponent', () => {
       ) => {
         it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
           const debounceTimeValue = 300;
-          spyOn(service, 'searchTitles').and.returnValue(
-            of(['Chief Technical Officer'])
+          spyOn(service, 'searchJobs').and.returnValue(
+            of([{ suggestion: 'Chief Technical Officer' } as Job])
           );
           const typedTextMock$: Observable<string> = interval(
             intervalTime
@@ -69,7 +70,7 @@ describe('SearchComponent', () => {
           tick(typedText.length * intervalTime + debounceTimeValue);
           fixture.detectChanges();
 
-          expect(service.searchTitles).toHaveBeenCalledTimes(
+          expect(service.searchJobs).toHaveBeenCalledTimes(
             expectedNumberOfCalls
           );
         }));

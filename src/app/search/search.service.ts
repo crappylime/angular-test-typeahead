@@ -4,6 +4,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { Job } from './models/job.model';
+import { Skill } from './models/skill.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,11 +15,15 @@ export class SearchService {
 
   constructor(private http: HttpClient) {}
 
-  searchTitles(term: string): Observable<string[]> {
+  searchJobs(term: string): Observable<Job[]> {
+    return this.http.get<Job[]>(`${this.url}/autocomplete`, {
+      params: new HttpParams().set('contains', term)
+    });
+  }
+
+  getSkills(jobId: string): Observable<Skill[]> {
     return this.http
-      .get<{ suggestion: string }[]>(`${this.url}/autocomplete`, {
-        params: new HttpParams().set('contains', term)
-      })
-      .pipe(map(response => response.map(obj => obj.suggestion)));
+      .get<{ skills: Skill[] }>(`${this.url}/${jobId}/related_skills`, {})
+      .pipe(map(response => response.skills));
   }
 }

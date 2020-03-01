@@ -11,6 +11,7 @@ import {
   tap
 } from 'rxjs/operators';
 
+import { Job } from '../../models/job.model';
 import { SearchService } from '../../search.service';
 
 @Component({
@@ -22,13 +23,14 @@ export class SearchComponent implements OnInit {
   readonly noResultsMessage = 'No results';
 
   isLoading = false;
+  jobId: string;
   searchControl = new FormControl();
-  titles$: Observable<string[]>;
+  jobs$: Observable<Job[]>;
 
   constructor(private service: SearchService) {}
 
   ngOnInit() {
-    this.titles$ = this.searchControl.valueChanges.pipe(
+    this.jobs$ = this.searchControl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => (this.isLoading = true)),
@@ -36,16 +38,21 @@ export class SearchComponent implements OnInit {
         !value || value.length < 2
           ? of([])
           : this.service
-              .searchTitles(value.toLowerCase())
+              .searchJobs(value.toLowerCase())
               .pipe(
                 catchError((error: HttpErrorResponse) =>
                   error.status === 404
-                    ? of([this.noResultsMessage])
+                    ? of([{ suggestion: this.noResultsMessage } as Job])
                     : throwError(error)
                 )
               )
       ),
       tap(() => (this.isLoading = false))
     );
+  }
+
+  clear() {
+    this.searchControl.setValue('');
+    this.jobId = '';
   }
 }

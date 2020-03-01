@@ -11,8 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 
 import { SearchComponent } from './components/search/search.component';
+import { SkillsComponent } from './components/skills/skills.component';
 
 @NgModule({
   imports: [
@@ -26,9 +28,10 @@ import { SearchComponent } from './components/search/search.component';
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatTableModule,
     ReactiveFormsModule
   ],
-  declarations: [SearchComponent],
+  declarations: [SearchComponent, SkillsComponent],
   exports: [SearchComponent]
 })
 export class SearchModule {}
