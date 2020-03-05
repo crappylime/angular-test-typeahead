@@ -1,11 +1,18 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick
+} from '@angular/core/testing';
 
 import { Observable, interval, of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 
+import { Job } from '../../models/job.model';
 import { SearchComponent } from './search.component';
-import { SearchModule } from './search.module';
-import { SearchService } from './search.service';
+import { SearchModule } from '../../search.module';
+import { SearchService } from '../../search.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -13,18 +20,15 @@ describe('SearchComponent', () => {
   let service: SearchService;
 
   const searchServiceStub: Partial<SearchService> = {
-    searchTitles: () => of([])
+    searchJobs: () => of([])
   };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [SearchModule],
-      providers: [
-        { provide: SearchService, useValue: searchServiceStub }
-      ]
-    })
-      .compileComponents();
-    service = TestBed.get(SearchService);
+      providers: [{ provide: SearchService, useValue: searchServiceStub }]
+    }).compileComponents();
+    service = TestBed.inject(SearchService);
   }));
 
   beforeEach(() => {
@@ -49,8 +53,12 @@ describe('SearchComponent', () => {
       ) => {
         it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
           const debounceTimeValue = 300;
-          spyOn(service, 'searchTitles').and.returnValue(of(['Chief Technical Officer']));
-          const typedTextMock$: Observable<string> = interval(intervalTime).pipe(
+          spyOn(service, 'searchJobs').and.returnValue(
+            of([{ suggestion: 'Chief Technical Officer' } as Job])
+          );
+          const typedTextMock$: Observable<string> = interval(
+            intervalTime
+          ).pipe(
             take(typedText.length),
             map(index => typedText[index])
           );
@@ -62,7 +70,9 @@ describe('SearchComponent', () => {
           tick(typedText.length * intervalTime + debounceTimeValue);
           fixture.detectChanges();
 
-          expect(service.searchTitles).toHaveBeenCalledTimes(expectedNumberOfCalls);
+          expect(service.searchJobs).toHaveBeenCalledTimes(
+            expectedNumberOfCalls
+          );
         }));
       };
 
@@ -73,7 +83,7 @@ describe('SearchComponent', () => {
       test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
     });
 
-    it('displays an alert when no matches were found', () => {
+    it('displays the appropriate message when no matches were found', () => {
       expect(component).toBeTruthy();
     });
 
