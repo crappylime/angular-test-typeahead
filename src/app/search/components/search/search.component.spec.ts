@@ -83,7 +83,7 @@ describe('SearchComponent', () => {
       test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
     });
 
-    it('displays an alert when no matches were found', () => {
+    it('displays the appropriate message when no matches were found', () => {
       expect(component).toBeTruthy();
     });
 

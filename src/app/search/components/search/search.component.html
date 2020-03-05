@@ -24,7 +24,7 @@
       </mat-option>
       <mat-option
         *ngFor="let job of jobs$ | async"
-        [disabled]="job.suggestion === noResultsMessage"
+        [disabled]="job.isDisabled"
         [value]="job.suggestion"
         (onSelectionChange)="jobId = job.uuid"
       >

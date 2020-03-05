@@ -13,8 +13,8 @@ import { Skill } from '../../models/skill.model';
 })
 export class SkillsComponent {
   displayedColumns: string[] = [
-    'skill_name',
-    'skill_type',
+    'name',
+    'type',
     'description',
     'importance',
     'level'

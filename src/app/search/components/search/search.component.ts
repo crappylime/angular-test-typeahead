@@ -1,14 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { MatOptionSelectionChange } from '@angular/material/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
-  catchError,
   debounceTime,
   distinctUntilChanged,
-  map,
   switchMap,
   tap
 } from 'rxjs/operators';
@@ -22,8 +18,6 @@ import { SearchService } from '../../search.service';
   styleUrls: ['search.component.scss']
 })
 export class SearchComponent implements OnInit {
-  readonly noResultsMessage = 'No results';
-
   isLoading = false;
   jobId: string;
   jobs$: Observable<Job[]>;
@@ -39,15 +33,7 @@ export class SearchComponent implements OnInit {
       switchMap((value: string) =>
         !value || value.length < 2
           ? of([])
-          : this.service
-              .searchJobs(value.toLowerCase())
-              .pipe(
-                catchError((error: HttpErrorResponse) =>
-                  error.status === 404
-                    ? of([{ suggestion: this.noResultsMessage } as Job])
-                    : throwError(error)
-                )
-              )
+          : this.service.searchJobs(value.toLowerCase())
       ),
       tap(() => (this.isLoading = false))
     );

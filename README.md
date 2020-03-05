@@ -1,4 +1,4 @@
-# Simulating user DOM interaction in Angular unit tests
+# Simulating user DOM interaction in Angular unit tests <!-- omit in toc -->
 
 <a href="https://github.com/crappylime/angular-test-typeahead/commits/master"><img src="https://img.shields.io/github/last-commit/crappylime/angular-test-typeahead.svg?style=plasticr"/></a>
 [![license](https://img.shields.io/github/license/crappylime/angular-test-typeahead.svg)](https://github.com/crappylime/angular-test-typeahead/blob/master/LICENSE)
@@ -12,24 +12,24 @@ Many components have complex interactions with the DOM elements described in the
 I will test here the user DOM interaction with the sample search component - an enhanced version of the [Angular Material Autocomplete]().
 Check out this project on [stackblitz](https://stackblitz.com/github/crappylime/angular-test-typeahead).
 
-## Table of contents
+## Table of contents <!-- omit in toc -->
 
-- [Simulating user DOM interaction in Angular unit tests](#simulating-user-dom-interaction-in-angular-unit-tests)
-  - [Table of contents](#table-of-contents)
-  - [Motivation](#motivation)
-  - [Built With](#built-with)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installing](#installing)
-  - [Components with inputs and outputs](#components-with-inputs-and-outputs)
-  - [Async tests](#async-tests)
-  - [Interacting with Input Boxes](#interacting-with-input-boxes)
-  - [Test 'cases' pattern](#test-cases-pattern)
-  - [Page object](#page-object)
-  - [License](#license)
-  - [Credits](#credits)
+- [Motivation](#motivation)
+- [Built With](#built-with)
+- [Getting Started](#getting-started)
+- [Components with inputs and outputs](#components-with-inputs-and-outputs)
+- [Async tests](#async-tests)
+- [Interacting with Input Boxes](#interacting-with-input-boxes)
+- [Test 'cases' pattern](#test-cases-pattern)
+- [Page object](#page-object)
+- [License](#license)
+- [Credits](#credits)
 
 ## Motivation
+
+### Can class-only tests guarantee that a component in Angular works correctly? <!-- omit in toc -->
+
+Here is the answer from the Angular testing documentation:
 
 > But a component is more than just its class. A component interacts with the DOM and with other components. The class-only tests can tell you about class behavior. They cannot tell you if the component is going to render properly, respond to user input and gestures, or integrate with its parent and child components.
 >
@@ -51,12 +51,12 @@ Check out this project on [stackblitz](https://stackblitz.com/github/crappylime/
 
 <details><summary><b>Show instructions on how to get a copy of the project up and running on your local machine</b></summary>
 
-### Prerequisites
+### Prerequisites <!-- omit in toc -->
 
-- [VS Code](https://code.visualstudio.com) (you will get extensions that I recommend) or other IDE
+- [VS Code](https://code.visualstudio.com) or other IDE
 - [Node.js v. 10.16.3](https://nodejs.org) or higher
 
-### Installing
+### Installing <!-- omit in toc -->
 
 1.  Clone repo
 
