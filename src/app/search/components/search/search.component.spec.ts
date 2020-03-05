@@ -9,7 +9,7 @@ import {
 import { By } from '@angular/platform-browser';
 
 import { Observable, interval, of } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { delay, map, take } from 'rxjs/operators';
 
 import { Job } from '../../models/job.model';
 import { SearchComponent } from './search.component';
@@ -63,6 +63,29 @@ describe('SearchComponent', () => {
       expect(optionDe.nativeElement.textContent).toContain('No results');
     }));
 
+    it('displays a spinner while loading results', fakeAsync(() => {
+      let optionDe: DebugElement;
+      spyOn(service, 'searchJobs').and.returnValue(
+        of([{ suggestion: 'Chief Officer' } as Job]).pipe(delay(200))
+      );
+      htmlInput.value = 'ch';
+      htmlInput.dispatchEvent(new Event('input'));
+
+      tick(300);
+      fixture.detectChanges();
+      htmlInput.dispatchEvent(new Event('focusin'));
+      optionDe = fixture.debugElement.query(By.css('.mat-spinner'));
+      expect(optionDe).toBeTruthy();
+
+      tick(200);
+      fixture.detectChanges();
+      htmlInput.dispatchEvent(new Event('focusin'));
+      optionDe = fixture.debugElement.query(By.css('.mat-spinner'));
+      expect(optionDe).toBeFalsy();
+
+      tick();
+    }));
+
     describe('when user types', () => {
       const test = (
         description: string,
@@ -100,10 +123,6 @@ describe('SearchComponent', () => {
       test('quickly only one char', ['t'], 0);
       test('slowly two chars', ['t', 'te'], 1, 400);
       test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
-    });
-
-    it('displays a spinner while loading results', () => {
-      expect(component).toBeTruthy();
     });
   });
 });
