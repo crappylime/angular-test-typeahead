@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { Skill } from '../../models/skill.model';
   templateUrl: './skills.component.html',
   styleUrls: ['./skills.component.scss']
 })
-export class SkillsComponent implements OnInit {
+export class SkillsComponent {
   displayedColumns: string[] = [
     'skill_name',
     'skill_type',
@@ -22,14 +22,19 @@ export class SkillsComponent implements OnInit {
   isLoading = false;
   skills$: Observable<Skill[]>;
 
-  @Input() jobId: string;
-
-  constructor(private service: SearchService) {}
-
-  ngOnInit() {
+  @Input() set jobId(id: string) {
+    this._jobId = id;
     this.isLoading = true;
     this.skills$ = this.service
       .getSkills(this.jobId)
       .pipe(finalize(() => (this.isLoading = false)));
   }
+
+  get jobId(): string {
+    return this._jobId;
+  }
+
+  private _jobId: string;
+
+  constructor(private service: SearchService) {}
 }

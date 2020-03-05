@@ -2,11 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable, of, throwError } from 'rxjs';
 import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  map,
   switchMap,
   tap
 } from 'rxjs/operators';
@@ -34,6 +36,12 @@ export class SearchComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => (this.isLoading = true)),
+      map((value: string | Job) => {
+        if (typeof value !== 'string') {
+          value = value.suggestion;
+        }
+        return value;
+      }),
       switchMap((value: string) =>
         !value || value.length < 2
           ? of([])
@@ -54,5 +62,13 @@ export class SearchComponent implements OnInit {
   clear() {
     this.searchControl.setValue('');
     this.jobId = '';
+  }
+
+  displayJobTitle(job: Job): string {
+    return job?.suggestion;
+  }
+
+  onSelect(event: MatAutocompleteSelectedEvent) {
+    this.jobId = (event.option.value as Job).uuid;
   }
 }

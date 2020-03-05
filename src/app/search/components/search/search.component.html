@@ -18,15 +18,18 @@
     >
       <mat-icon>close</mat-icon>
     </button>
-    <mat-autocomplete #auto="matAutocomplete">
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="displayJobTitle"
+      (optionSelected)="onSelect($event)"
+    >
       <mat-option *ngIf="isLoading">
         <mat-spinner diameter="17"></mat-spinner>
       </mat-option>
       <mat-option
         *ngFor="let job of jobs$ | async"
-        [value]="job.suggestion"
         [disabled]="job.suggestion === noResultsMessage"
-        (click)="jobId = job.uuid"
+        [value]="job"
       >
         {{ job.suggestion }}
       </mat-option>
