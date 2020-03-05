@@ -1,3 +1,4 @@
+import { DebugElement } from '@angular/core';
 import {
   async,
   ComponentFixture,
@@ -5,6 +6,7 @@ import {
   fakeAsync,
   tick
 } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { Observable, interval, of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
@@ -44,6 +46,23 @@ describe('SearchComponent', () => {
       htmlInput = fixture.nativeElement.querySelector('input');
     });
 
+    it('displays the appropriate message when no matches were found', fakeAsync(() => {
+      spyOn(service, 'searchJobs').and.returnValue(
+        of([{ suggestion: 'No results', isDisabled: true } as Job])
+      );
+      htmlInput.value = 'xxxxxxxxxxxxxxxxxxxx';
+      htmlInput.dispatchEvent(new Event('input'));
+
+      tick(300);
+      fixture.detectChanges();
+      htmlInput.dispatchEvent(new Event('focusin'));
+      const optionDe = fixture.debugElement.query(
+        By.css('.mat-option-disabled')
+      );
+
+      expect(optionDe.nativeElement.textContent).toContain('No results');
+    }));
+
     describe('when user types', () => {
       const test = (
         description: string,
@@ -81,10 +100,6 @@ describe('SearchComponent', () => {
       test('quickly only one char', ['t'], 0);
       test('slowly two chars', ['t', 'te'], 1, 400);
       test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
-    });
-
-    it('displays the appropriate message when no matches were found', () => {
-      expect(component).toBeTruthy();
     });
 
     it('displays a spinner while loading results', () => {
