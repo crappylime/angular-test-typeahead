@@ -43,6 +43,7 @@ describe('SearchComponent', () => {
       declarations: [SearchComponent, SkillsStubComponent],
       imports: [
         // SearchModule // importing a feature module will import real components declarations
+        // https://github.com/angular/angular/issues/24607
         BrowserAnimationsModule,
         MatAutocompleteModule,
         MatButtonModule,
@@ -164,7 +165,7 @@ describe('SearchComponent', () => {
       test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
     });
 
-    fit('after selecting an option the child component should be visible', fakeAsync(() => {
+    it('after selecting an option the child component should be visible', fakeAsync(() => {
       let childEl: HTMLElement;
       spyOn(service, 'searchJobs').and.returnValue(
         of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
@@ -189,7 +190,31 @@ describe('SearchComponent', () => {
     describe('when the child component is visible', () => {
       it('changes after selecting another option', () => {});
 
-      it('disappears after clearing an option', () => {});
+      fit('disappears after clearing an option', fakeAsync(() => {
+        let childEl: HTMLElement;
+        spyOn(service, 'searchJobs').and.returnValue(
+          of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
+        );
+        htmlInput.value = 'ch';
+        htmlInput.dispatchEvent(new Event('input'));
+
+        tick(300);
+        fixture.detectChanges();
+        htmlInput.dispatchEvent(new Event('focusin'));
+        const optionDe = fixture.debugElement.query(By.css('.mat-option'));
+        optionDe.triggerEventHandler('onSelectionChange', null);
+        fixture.detectChanges();
+        childEl = fixture.nativeElement.querySelector('app-skills');
+        expect(childEl).toBeTruthy();
+
+        const clearDe = fixture.debugElement.query(By.css('.mat-icon-button'));
+        clearDe.triggerEventHandler('click', null);
+        tick(300);
+        fixture.detectChanges();
+        childEl = fixture.nativeElement.querySelector('app-skills');
+        expect(childEl).toBeFalsy();
+        tick();
+      }));
     });
   });
 });
