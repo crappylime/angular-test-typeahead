@@ -188,9 +188,38 @@ describe('SearchComponent', () => {
     }));
 
     describe('when the child component is visible', () => {
-      it('changes after selecting another option', () => {});
+      it('changes after selecting another option', fakeAsync(() => {
+        let childEl: HTMLElement;
+        let optionDes: DebugElement[];
+        spyOn(service, 'searchJobs').and.returnValue(
+          of([
+            { uuid: '1', suggestion: 'Chief Officer' } as Job,
+            { uuid: '2', suggestion: 'Chief Developer' } as Job
+          ])
+        );
+        htmlInput.value = 'ch';
+        htmlInput.dispatchEvent(new Event('input'));
+        tick(300);
+        fixture.detectChanges();
+        htmlInput.dispatchEvent(new Event('focusin'));
+        optionDes = fixture.debugElement.queryAll(By.css('.mat-option'));
+        console.log(optionDes);
+        optionDes[0].triggerEventHandler('onSelectionChange', null);
+        fixture.detectChanges();
+        childEl = fixture.nativeElement.querySelector('app-skills');
+        expect(component.jobId).toEqual('1');
+        expect(childEl).toBeTruthy();
 
-      fit('disappears after clearing an option', fakeAsync(() => {
+        htmlInput.dispatchEvent(new Event('focusin'));
+        optionDes = fixture.debugElement.queryAll(By.css('.mat-option'));
+        optionDes[1].triggerEventHandler('onSelectionChange', null);
+        fixture.detectChanges();
+        childEl = fixture.nativeElement.querySelector('app-skills');
+        expect(component.jobId).toEqual('2');
+        expect(childEl).toBeTruthy();
+      }));
+
+      it('disappears after clearing an option', fakeAsync(() => {
         let childEl: HTMLElement;
         spyOn(service, 'searchJobs').and.returnValue(
           of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
