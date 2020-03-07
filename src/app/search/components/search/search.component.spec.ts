@@ -25,14 +25,12 @@ class SkillsStubComponent {
 describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
+  let searchInput: HTMLInputElement;
   let service: SearchService;
-
+  const debounceTimeValue = 300;
   const searchServiceStub: Partial<SearchService> = {
     searchJobs: () => of([])
   };
-
-  // template elements
-  let searchInput: HTMLInputElement;
 
   // query helpers
   const query = <T>(selector: string): T =>
@@ -70,100 +68,95 @@ describe('SearchComponent', () => {
     searchInput = query('input');
   });
 
-  describe('#ngOnInit', () => {
-    let optionDe: DebugElement;
+  // wrap a function to be executed in the fakeAsync zone where timers are synchronous
+  it('displays the appropriate message when no matches were found', fakeAsync(() => {
+    const noResultsMessage = 'No results';
+    spyOn(service, 'searchJobs').and.returnValue(
+      of([{ suggestion: noResultsMessage, isDisabled: true } as Job])
+    );
 
-    // wrap a function to be executed in the fakeAsync zone where timers are synchronous
-    it('displays the appropriate message when no matches were found', fakeAsync(() => {
-      const noResultsMessage = 'No results';
-      spyOn(service, 'searchJobs').and.returnValue(
-        of([{ suggestion: noResultsMessage, isDisabled: true } as Job])
-      );
+    // simulate user entering a new value into the input box
+    searchInput.value = 'xxxxxxxxxxxxxxxxxxxx';
 
-      // simulate user entering a new value into the input box
-      searchInput.value = 'xxxxxxxxxxxxxxxxxxxx';
+    // dispatch a DOM event to trigger the form control value change
+    searchInput.dispatchEvent(new Event('input'));
 
-      // dispatch a DOM event so that Angular learns of input value change
-      searchInput.dispatchEvent(new Event('input'));
+    // simulate the asynchronous passage of time and wait for the async debounceTime to complete
+    tick(debounceTimeValue);
 
-      // simulate the asynchronous passage of time and wait for the async debounceTime to complete
-      tick(300);
+    // tell Angular to update the display binding
+    fixture.detectChanges();
 
-      // tell Angular to update the display binding
-      fixture.detectChanges();
+    // open the panel when the input is focused
+    searchInput.dispatchEvent(new Event('focusin'));
+    const optionDebugEl = queryByCss('.mat-option-disabled');
 
-      // open the panel when the input is focused
-      searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = queryByCss('.mat-option-disabled');
+    expect(optionDebugEl.nativeElement.textContent).toContain(noResultsMessage);
+  }));
 
-      expect(optionDe.nativeElement.textContent).toContain(noResultsMessage);
-    }));
+  it('displays a spinner while loading results', fakeAsync(() => {
+    let spinnerDebugEl: DebugElement;
+    const serverDelayTimeValue = 200;
+    spyOn(service, 'searchJobs').and.returnValue(
+      of([{ suggestion: 'Chief Officer' } as Job]).pipe(
+        delay(serverDelayTimeValue)
+      )
+    );
+    searchInput.value = 'ch';
+    searchInput.dispatchEvent(new Event('input'));
 
-    it('displays a spinner while loading results', fakeAsync(() => {
-      spyOn(service, 'searchJobs').and.returnValue(
-        of([{ suggestion: 'Chief Officer' } as Job]).pipe(delay(200))
-      );
-      searchInput.value = 'ch';
-      searchInput.dispatchEvent(new Event('input'));
+    tick(debounceTimeValue);
+    fixture.detectChanges();
+    searchInput.dispatchEvent(new Event('focusin'));
+    spinnerDebugEl = queryByCss('.mat-spinner');
+    expect(spinnerDebugEl).toBeTruthy();
 
-      tick(300);
-      fixture.detectChanges();
-      searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = queryByCss('.mat-spinner');
-      expect(optionDe).toBeTruthy();
+    tick(serverDelayTimeValue);
+    fixture.detectChanges();
+    searchInput.dispatchEvent(new Event('focusin'));
+    spinnerDebugEl = queryByCss('.mat-spinner');
+    expect(spinnerDebugEl).toBeFalsy();
 
-      tick(200);
-      fixture.detectChanges();
-      searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = queryByCss('.mat-spinner');
-      expect(optionDe).toBeFalsy();
+    tick();
+  }));
 
-      tick();
-    }));
+  describe('when user types', () => {
+    const test = (
+      description: string,
+      typedText: string[],
+      expectedNumberOfCalls: number,
+      intervalTime = 100
+    ) => {
+      it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
+        spyOn(service, 'searchJobs').and.returnValue(
+          of([{ suggestion: 'Chief Technical Officer' } as Job])
+        );
+        const typedTextMock$: Observable<string> = interval(intervalTime).pipe(
+          take(typedText.length),
+          map(index => typedText[index])
+        );
 
-    describe('when user types', () => {
-      const test = (
-        description: string,
-        typedText: string[],
-        expectedNumberOfCalls: number,
-        intervalTime = 100
-      ) => {
-        it(`${description}, call the service ${expectedNumberOfCalls} time/-s`, fakeAsync(() => {
-          const debounceTimeValue = 300;
-          spyOn(service, 'searchJobs').and.returnValue(
-            of([{ suggestion: 'Chief Technical Officer' } as Job])
-          );
-          const typedTextMock$: Observable<string> = interval(
-            intervalTime
-          ).pipe(
-            take(typedText.length),
-            map(index => typedText[index])
-          );
+        typedTextMock$.subscribe(chars => {
+          searchInput.value = chars;
+          searchInput.dispatchEvent(new Event('input'));
+        });
+        tick(typedText.length * intervalTime + debounceTimeValue);
+        fixture.detectChanges();
 
-          typedTextMock$.subscribe(chars => {
-            searchInput.value = chars;
-            searchInput.dispatchEvent(new Event('input'));
-          });
-          tick(typedText.length * intervalTime + debounceTimeValue);
-          fixture.detectChanges();
+        expect(service.searchJobs).toHaveBeenCalledTimes(expectedNumberOfCalls);
+      }));
+    };
 
-          expect(service.searchJobs).toHaveBeenCalledTimes(
-            expectedNumberOfCalls
-          );
-        }));
-      };
-
-      test('quickly', ['te', 'tec', 'tech'], 1);
-      test('slowly', ['te', 'tec', 'tech'], 3, 400);
-      test('quickly only one char', ['t'], 0);
-      test('slowly two chars', ['t', 'te'], 1, 400);
-      test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
-    });
+    test('quickly', ['te', 'tec', 'tech'], 1);
+    test('slowly', ['te', 'tec', 'tech'], 3, 400);
+    test('quickly only one char', ['t'], 0);
+    test('slowly two chars', ['t', 'te'], 1, 400);
+    test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
   });
 
   describe('a nested skills component', () => {
     let skillsEl: HTMLElement;
-    let optionDes: DebugElement[];
+    let optionDebugEls: DebugElement[];
 
     beforeEach(fakeAsync(() => {
       spyOn(service, 'searchJobs').and.returnValue(
@@ -174,7 +167,7 @@ describe('SearchComponent', () => {
       );
       searchInput.value = 'ch';
       searchInput.dispatchEvent(new Event('input'));
-      tick(300);
+      tick(debounceTimeValue);
       fixture.detectChanges();
     }));
 
@@ -186,8 +179,8 @@ describe('SearchComponent', () => {
     describe('when option is selected', () => {
       beforeEach(() => {
         searchInput.dispatchEvent(new Event('focusin'));
-        optionDes = queryAllByCss('.mat-option');
-        optionDes[0].triggerEventHandler('onSelectionChange', null);
+        optionDebugEls = queryAllByCss('.mat-option');
+        optionDebugEls[0].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
         skillsEl = query('app-skills');
       });
@@ -196,28 +189,25 @@ describe('SearchComponent', () => {
         expect(skillsEl).toBeTruthy();
       }));
 
-      it('skills update after selecting another option', fakeAsync(() => {
+      it('jobId changes after selecting another option', fakeAsync(() => {
         expect(component.jobId).toEqual('1');
 
         searchInput.dispatchEvent(new Event('focusin'));
-        optionDes = queryAllByCss('.mat-option');
-        optionDes[1].triggerEventHandler('onSelectionChange', null);
+        optionDebugEls = queryAllByCss('.mat-option');
+        optionDebugEls[1].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
         skillsEl = query('app-skills');
 
-        expect(skillsEl).toBeTruthy();
         expect(component.jobId).toEqual('2');
       }));
 
       it('skills disappear after clearing', fakeAsync(() => {
-        const clearDe = queryByCss('.mat-icon-button');
-        clearDe.triggerEventHandler('click', null);
-        tick(300);
+        const clearDebugEl = queryByCss('.mat-icon-button');
+        clearDebugEl.triggerEventHandler('click', null);
         fixture.detectChanges();
         skillsEl = query('app-skills');
 
         expect(skillsEl).toBeFalsy();
-        tick();
       }));
     });
   });
