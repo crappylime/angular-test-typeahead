@@ -39,7 +39,6 @@ describe('SearchComponent', () => {
   };
 
   // template elements
-  let childEl: HTMLElement;
   let optionDe: DebugElement;
   let searchInput: HTMLInputElement;
 
@@ -173,80 +172,64 @@ describe('SearchComponent', () => {
       test('slowly two chars', ['t', 'te'], 1, 400);
       test('slowly the same several times', ['te', 'te', 'te'], 1, 400);
     });
+  });
 
-    it('after selecting an option the child component should be visible', fakeAsync(() => {
+  describe('a nested skills component', () => {
+    let skillsEl: HTMLElement;
+    let optionDes: DebugElement[];
+
+    beforeEach(fakeAsync(() => {
       spyOn(service, 'searchJobs').and.returnValue(
-        of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
+        of([
+          { uuid: '1', suggestion: 'Chief Officer' } as Job,
+          { uuid: '2', suggestion: 'Chief Developer' } as Job
+        ])
       );
       searchInput.value = 'ch';
       searchInput.dispatchEvent(new Event('input'));
-
       tick(300);
       fixture.detectChanges();
-      childEl = query('app-skills');
-      expect(childEl).toBeFalsy();
-      searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = queryByCss('.mat-option');
-
-      optionDe.triggerEventHandler('onSelectionChange', null);
-      fixture.detectChanges();
-      childEl = query('app-skills');
-      // console.log(childEl);
-      expect(childEl).toBeTruthy();
     }));
 
-    describe('when the child component is visible', () => {
-      it('changes after selecting another option', fakeAsync(() => {
-        let optionDes: DebugElement[];
-        spyOn(service, 'searchJobs').and.returnValue(
-          of([
-            { uuid: '1', suggestion: 'Chief Officer' } as Job,
-            { uuid: '2', suggestion: 'Chief Developer' } as Job
-          ])
-        );
-        searchInput.value = 'ch';
-        searchInput.dispatchEvent(new Event('input'));
-        tick(300);
-        fixture.detectChanges();
+    it('skills are not visible before selecting any option', () => {
+      skillsEl = query('app-skills');
+      expect(skillsEl).toBeFalsy();
+    });
+
+    describe('when option is selected', () => {
+      beforeEach(() => {
         searchInput.dispatchEvent(new Event('focusin'));
         optionDes = queryAllByCss('.mat-option');
         optionDes[0].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
-        childEl = query('app-skills');
+        skillsEl = query('app-skills');
+      });
+
+      it('skills are visible', fakeAsync(() => {
+        expect(skillsEl).toBeTruthy();
+      }));
+
+      it('skills update after selecting another option', fakeAsync(() => {
         expect(component.jobId).toEqual('1');
-        expect(childEl).toBeTruthy();
 
         searchInput.dispatchEvent(new Event('focusin'));
         optionDes = queryAllByCss('.mat-option');
         optionDes[1].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
-        childEl = query('app-skills');
+        skillsEl = query('app-skills');
+
+        expect(skillsEl).toBeTruthy();
         expect(component.jobId).toEqual('2');
-        expect(childEl).toBeTruthy();
       }));
 
-      it('disappears after clearing an option', fakeAsync(() => {
-        spyOn(service, 'searchJobs').and.returnValue(
-          of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
-        );
-        searchInput.value = 'ch';
-        searchInput.dispatchEvent(new Event('input'));
-
-        tick(300);
-        fixture.detectChanges();
-        searchInput.dispatchEvent(new Event('focusin'));
-        optionDe = queryByCss('.mat-option');
-        optionDe.triggerEventHandler('onSelectionChange', null);
-        fixture.detectChanges();
-        childEl = query('app-skills');
-        expect(childEl).toBeTruthy();
-
+      it('skills disappear after clearing', fakeAsync(() => {
         const clearDe = queryByCss('.mat-icon-button');
         clearDe.triggerEventHandler('click', null);
         tick(300);
         fixture.detectChanges();
-        childEl = query('app-skills');
-        expect(childEl).toBeFalsy();
+        skillsEl = query('app-skills');
+
+        expect(skillsEl).toBeFalsy();
         tick();
       }));
     });
