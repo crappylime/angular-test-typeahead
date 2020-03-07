@@ -9,7 +9,7 @@ Many components have complex interactions with the DOM elements described in the
 - timepicker / datepicker,
 - tables sorting / filtering / pagination.
 
-I will test here the user DOM interaction with the sample search component - an enhanced version of the [Angular Material Autocomplete]().
+I will test here the user DOM interaction with the sample search component - an enhanced version of the [Angular Material Autocomplete](https://material.angular.io/components/autocomplete/overview).
 Check out this project on [stackblitz](https://stackblitz.com/github/crappylime/angular-test-typeahead).
 
 ## Table of contents <!-- omit in toc -->
