@@ -38,6 +38,11 @@ describe('SearchComponent', () => {
     searchJobs: () => of([])
   };
 
+  // template elements
+  let childEl: HTMLElement;
+  let optionDe: DebugElement;
+  let searchInput: HTMLInputElement;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [SearchComponent, SkillsStubComponent],
@@ -72,54 +77,47 @@ describe('SearchComponent', () => {
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    // get the search input from the DOM
+    searchInput = fixture.nativeElement.querySelector('input');
   });
 
   describe('#ngOnInit', () => {
-    let htmlInput: HTMLInputElement;
-
-    beforeEach(() => {
-      // get the search input from the DOM
-      htmlInput = fixture.nativeElement.querySelector('input');
-    });
-
     it('displays the appropriate message when no matches were found', fakeAsync(() => {
       spyOn(service, 'searchJobs').and.returnValue(
         of([{ suggestion: 'No results', isDisabled: true } as Job])
       );
       // simulate user entering a new value into the input box
-      htmlInput.value = 'xxxxxxxxxxxxxxxxxxxx';
+      searchInput.value = 'xxxxxxxxxxxxxxxxxxxx';
       // dispatch a DOM event so that Angular learns of input value change
-      htmlInput.dispatchEvent(new Event('input'));
+      searchInput.dispatchEvent(new Event('input'));
 
       // wait for async debounceTime to complete
       tick(300);
       // Tell Angular to update the display binding
       fixture.detectChanges();
-      htmlInput.dispatchEvent(new Event('focusin'));
-      const optionDe = fixture.debugElement.query(
-        By.css('.mat-option-disabled')
-      );
+      searchInput.dispatchEvent(new Event('focusin'));
+      optionDe = fixture.debugElement.query(By.css('.mat-option-disabled'));
 
       expect(optionDe.nativeElement.textContent).toContain('No results');
     }));
 
     it('displays a spinner while loading results', fakeAsync(() => {
-      let optionDe: DebugElement;
       spyOn(service, 'searchJobs').and.returnValue(
         of([{ suggestion: 'Chief Officer' } as Job]).pipe(delay(200))
       );
-      htmlInput.value = 'ch';
-      htmlInput.dispatchEvent(new Event('input'));
+      searchInput.value = 'ch';
+      searchInput.dispatchEvent(new Event('input'));
 
       tick(300);
       fixture.detectChanges();
-      htmlInput.dispatchEvent(new Event('focusin'));
+      searchInput.dispatchEvent(new Event('focusin'));
       optionDe = fixture.debugElement.query(By.css('.mat-spinner'));
       expect(optionDe).toBeTruthy();
 
       tick(200);
       fixture.detectChanges();
-      htmlInput.dispatchEvent(new Event('focusin'));
+      searchInput.dispatchEvent(new Event('focusin'));
       optionDe = fixture.debugElement.query(By.css('.mat-spinner'));
       expect(optionDe).toBeFalsy();
 
@@ -146,8 +144,8 @@ describe('SearchComponent', () => {
           );
 
           typedTextMock$.subscribe(chars => {
-            htmlInput.value = chars;
-            htmlInput.dispatchEvent(new Event('input'));
+            searchInput.value = chars;
+            searchInput.dispatchEvent(new Event('input'));
           });
           tick(typedText.length * intervalTime + debounceTimeValue);
           fixture.detectChanges();
@@ -166,19 +164,18 @@ describe('SearchComponent', () => {
     });
 
     it('after selecting an option the child component should be visible', fakeAsync(() => {
-      let childEl: HTMLElement;
       spyOn(service, 'searchJobs').and.returnValue(
         of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
       );
-      htmlInput.value = 'ch';
-      htmlInput.dispatchEvent(new Event('input'));
+      searchInput.value = 'ch';
+      searchInput.dispatchEvent(new Event('input'));
 
       tick(300);
       fixture.detectChanges();
       childEl = fixture.nativeElement.querySelector('app-skills');
       expect(childEl).toBeFalsy();
-      htmlInput.dispatchEvent(new Event('focusin'));
-      const optionDe = fixture.debugElement.query(By.css('.mat-option'));
+      searchInput.dispatchEvent(new Event('focusin'));
+      optionDe = fixture.debugElement.query(By.css('.mat-option'));
 
       optionDe.triggerEventHandler('onSelectionChange', null);
       fixture.detectChanges();
@@ -189,7 +186,6 @@ describe('SearchComponent', () => {
 
     describe('when the child component is visible', () => {
       it('changes after selecting another option', fakeAsync(() => {
-        let childEl: HTMLElement;
         let optionDes: DebugElement[];
         spyOn(service, 'searchJobs').and.returnValue(
           of([
@@ -197,20 +193,19 @@ describe('SearchComponent', () => {
             { uuid: '2', suggestion: 'Chief Developer' } as Job
           ])
         );
-        htmlInput.value = 'ch';
-        htmlInput.dispatchEvent(new Event('input'));
+        searchInput.value = 'ch';
+        searchInput.dispatchEvent(new Event('input'));
         tick(300);
         fixture.detectChanges();
-        htmlInput.dispatchEvent(new Event('focusin'));
+        searchInput.dispatchEvent(new Event('focusin'));
         optionDes = fixture.debugElement.queryAll(By.css('.mat-option'));
-        console.log(optionDes);
         optionDes[0].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
         childEl = fixture.nativeElement.querySelector('app-skills');
         expect(component.jobId).toEqual('1');
         expect(childEl).toBeTruthy();
 
-        htmlInput.dispatchEvent(new Event('focusin'));
+        searchInput.dispatchEvent(new Event('focusin'));
         optionDes = fixture.debugElement.queryAll(By.css('.mat-option'));
         optionDes[1].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
@@ -220,17 +215,16 @@ describe('SearchComponent', () => {
       }));
 
       it('disappears after clearing an option', fakeAsync(() => {
-        let childEl: HTMLElement;
         spyOn(service, 'searchJobs').and.returnValue(
           of([{ uuid: '1', suggestion: 'Chief Officer' } as Job])
         );
-        htmlInput.value = 'ch';
-        htmlInput.dispatchEvent(new Event('input'));
+        searchInput.value = 'ch';
+        searchInput.dispatchEvent(new Event('input'));
 
         tick(300);
         fixture.detectChanges();
-        htmlInput.dispatchEvent(new Event('focusin'));
-        const optionDe = fixture.debugElement.query(By.css('.mat-option'));
+        searchInput.dispatchEvent(new Event('focusin'));
+        optionDe = fixture.debugElement.query(By.css('.mat-option'));
         optionDe.triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
         childEl = fixture.nativeElement.querySelector('app-skills');
