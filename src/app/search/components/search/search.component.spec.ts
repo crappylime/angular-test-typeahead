@@ -39,7 +39,6 @@ describe('SearchComponent', () => {
   };
 
   // template elements
-  let optionDe: DebugElement;
   let searchInput: HTMLInputElement;
 
   // query helpers
@@ -90,6 +89,8 @@ describe('SearchComponent', () => {
   });
 
   describe('#ngOnInit', () => {
+    let optionDe: DebugElement;
+
     it('displays the appropriate message when no matches were found', fakeAsync(() => {
       spyOn(service, 'searchJobs').and.returnValue(
         of([{ suggestion: 'No results', isDisabled: true } as Job])
