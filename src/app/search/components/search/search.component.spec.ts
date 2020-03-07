@@ -6,23 +6,16 @@ import {
   fakeAsync,
   tick
 } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { Observable, interval, of } from 'rxjs';
 import { delay, map, take } from 'rxjs/operators';
 
 import { Job } from '../../models/job.model';
 import { SearchComponent } from './search.component';
 import { SearchService } from '../../search.service';
+import { SearchModule } from '../../search.module';
+import { SkillsComponent } from '../skills/skills.component';
 
 @Component({ selector: 'app-skills', template: '' })
 class SkillsStubComponent {
@@ -51,30 +44,19 @@ describe('SearchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SearchComponent, SkillsStubComponent],
-      imports: [
-        // SearchModule // importing a feature module will import real components declarations
-        // https://github.com/angular/angular/issues/24607
-        BrowserAnimationsModule,
-        MatAutocompleteModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        ReactiveFormsModule
-      ],
+      declarations: [SearchComponent],
+      imports: [SearchModule],
       providers: [{ provide: SearchService, useValue: searchServiceStub }]
     })
-
-      // override does not provide a way to replace the component logic
-      // .overrideComponent(SkillsComponent, {
-      //   set: {
-      //     template: '<table></table>'
-      //   }
-      // })
-
+      .overrideModule(SearchModule, {
+        // Replace the real SkillsComponent with the stub
+        remove: {
+          declarations: [SkillsComponent]
+        },
+        add: {
+          declarations: [SkillsStubComponent]
+        }
+      })
       .compileComponents();
     service = TestBed.inject(SearchService);
   }));
