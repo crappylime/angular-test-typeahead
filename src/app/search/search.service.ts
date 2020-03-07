@@ -15,6 +15,7 @@ import { ApiSkill, Skill } from './models/skill.model';
   providedIn: 'root'
 })
 export class SearchService {
+  private readonly noResultsMessage = 'No results';
   private url = 'http://api.dataatwork.org/v1/jobs';
 
   constructor(private http: HttpClient) {}
@@ -27,7 +28,9 @@ export class SearchService {
       .pipe(
         catchError((error: HttpErrorResponse) =>
           error.status === 404
-            ? of([{ suggestion: 'No results', isDisabled: true } as Job])
+            ? of([
+                { suggestion: this.noResultsMessage, isDisabled: true } as Job
+              ])
             : []
         )
       );

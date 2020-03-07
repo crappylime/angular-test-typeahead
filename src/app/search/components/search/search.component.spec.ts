@@ -73,9 +73,11 @@ describe('SearchComponent', () => {
   describe('#ngOnInit', () => {
     let optionDe: DebugElement;
 
+    // wrap a function to be executed in the fakeAsync zone where timers are synchronous
     it('displays the appropriate message when no matches were found', fakeAsync(() => {
+      const noResultsMessage = 'No results';
       spyOn(service, 'searchJobs').and.returnValue(
-        of([{ suggestion: 'No results', isDisabled: true } as Job])
+        of([{ suggestion: noResultsMessage, isDisabled: true } as Job])
       );
 
       // simulate user entering a new value into the input box
@@ -84,15 +86,17 @@ describe('SearchComponent', () => {
       // dispatch a DOM event so that Angular learns of input value change
       searchInput.dispatchEvent(new Event('input'));
 
-      // wait for async debounceTime to complete
+      // simulate the asynchronous passage of time and wait for the async debounceTime to complete
       tick(300);
 
-      // Tell Angular to update the display binding
+      // tell Angular to update the display binding
       fixture.detectChanges();
+
+      // open the panel when the input is focused
       searchInput.dispatchEvent(new Event('focusin'));
       optionDe = queryByCss('.mat-option-disabled');
 
-      expect(optionDe.nativeElement.textContent).toContain('No results');
+      expect(optionDe.nativeElement.textContent).toContain(noResultsMessage);
     }));
 
     it('displays a spinner while loading results', fakeAsync(() => {
