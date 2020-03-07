@@ -1,4 +1,4 @@
-import { DebugElement, Component, Input } from '@angular/core';
+import { Component, DebugElement, Input } from '@angular/core';
 import {
   async,
   ComponentFixture,
@@ -43,6 +43,14 @@ describe('SearchComponent', () => {
   let optionDe: DebugElement;
   let searchInput: HTMLInputElement;
 
+  // query helpers
+  const query = <T>(selector: string): T =>
+    fixture.nativeElement.querySelector(selector);
+  const queryByCss = (selector: string): DebugElement =>
+    fixture.debugElement.query(By.css(selector));
+  const queryAllByCss = (selector: string): DebugElement[] =>
+    fixture.debugElement.queryAll(By.css(selector));
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [SearchComponent, SkillsStubComponent],
@@ -79,7 +87,7 @@ describe('SearchComponent', () => {
     fixture.detectChanges();
 
     // get the search input from the DOM
-    searchInput = fixture.nativeElement.querySelector('input');
+    searchInput = query('input');
   });
 
   describe('#ngOnInit', () => {
@@ -87,17 +95,20 @@ describe('SearchComponent', () => {
       spyOn(service, 'searchJobs').and.returnValue(
         of([{ suggestion: 'No results', isDisabled: true } as Job])
       );
+
       // simulate user entering a new value into the input box
       searchInput.value = 'xxxxxxxxxxxxxxxxxxxx';
+
       // dispatch a DOM event so that Angular learns of input value change
       searchInput.dispatchEvent(new Event('input'));
 
       // wait for async debounceTime to complete
       tick(300);
+
       // Tell Angular to update the display binding
       fixture.detectChanges();
       searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = fixture.debugElement.query(By.css('.mat-option-disabled'));
+      optionDe = queryByCss('.mat-option-disabled');
 
       expect(optionDe.nativeElement.textContent).toContain('No results');
     }));
@@ -112,13 +123,13 @@ describe('SearchComponent', () => {
       tick(300);
       fixture.detectChanges();
       searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = fixture.debugElement.query(By.css('.mat-spinner'));
+      optionDe = queryByCss('.mat-spinner');
       expect(optionDe).toBeTruthy();
 
       tick(200);
       fixture.detectChanges();
       searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = fixture.debugElement.query(By.css('.mat-spinner'));
+      optionDe = queryByCss('.mat-spinner');
       expect(optionDe).toBeFalsy();
 
       tick();
@@ -172,14 +183,14 @@ describe('SearchComponent', () => {
 
       tick(300);
       fixture.detectChanges();
-      childEl = fixture.nativeElement.querySelector('app-skills');
+      childEl = query('app-skills');
       expect(childEl).toBeFalsy();
       searchInput.dispatchEvent(new Event('focusin'));
-      optionDe = fixture.debugElement.query(By.css('.mat-option'));
+      optionDe = queryByCss('.mat-option');
 
       optionDe.triggerEventHandler('onSelectionChange', null);
       fixture.detectChanges();
-      childEl = fixture.nativeElement.querySelector('app-skills');
+      childEl = query('app-skills');
       // console.log(childEl);
       expect(childEl).toBeTruthy();
     }));
@@ -198,18 +209,18 @@ describe('SearchComponent', () => {
         tick(300);
         fixture.detectChanges();
         searchInput.dispatchEvent(new Event('focusin'));
-        optionDes = fixture.debugElement.queryAll(By.css('.mat-option'));
+        optionDes = queryAllByCss('.mat-option');
         optionDes[0].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
-        childEl = fixture.nativeElement.querySelector('app-skills');
+        childEl = query('app-skills');
         expect(component.jobId).toEqual('1');
         expect(childEl).toBeTruthy();
 
         searchInput.dispatchEvent(new Event('focusin'));
-        optionDes = fixture.debugElement.queryAll(By.css('.mat-option'));
+        optionDes = queryAllByCss('.mat-option');
         optionDes[1].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
-        childEl = fixture.nativeElement.querySelector('app-skills');
+        childEl = query('app-skills');
         expect(component.jobId).toEqual('2');
         expect(childEl).toBeTruthy();
       }));
@@ -224,17 +235,17 @@ describe('SearchComponent', () => {
         tick(300);
         fixture.detectChanges();
         searchInput.dispatchEvent(new Event('focusin'));
-        optionDe = fixture.debugElement.query(By.css('.mat-option'));
+        optionDe = queryByCss('.mat-option');
         optionDe.triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
-        childEl = fixture.nativeElement.querySelector('app-skills');
+        childEl = query('app-skills');
         expect(childEl).toBeTruthy();
 
-        const clearDe = fixture.debugElement.query(By.css('.mat-icon-button'));
+        const clearDe = queryByCss('.mat-icon-button');
         clearDe.triggerEventHandler('click', null);
         tick(300);
         fixture.detectChanges();
-        childEl = fixture.nativeElement.querySelector('app-skills');
+        childEl = query('app-skills');
         expect(childEl).toBeFalsy();
         tick();
       }));
