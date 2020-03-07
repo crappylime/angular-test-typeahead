@@ -40,7 +40,7 @@ export class SearchComponent implements OnInit {
   }
 
   clear() {
-    this.searchControl.setValue('');
+    this.searchControl.reset('', { emitEvent: false });
     this.jobId = '';
   }
 }
