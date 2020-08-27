@@ -1,9 +1,20 @@
+mat-toolbar {
+  height: 110px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
 .search-form {
   min-width: 150px;
   max-width: 500px;
   width: 100%;
+  font-size: 16px;
 
-  .half-width {
-    width: 50%;
+  mat-form-field {
+    width: 90%;
   }
 }

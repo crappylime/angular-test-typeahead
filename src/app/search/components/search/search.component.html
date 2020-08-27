@@ -1,36 +1,40 @@
-<div class="search-form">
-  <mat-form-field class="half-width">
-    <input
-      type="text"
-      placeholder="Search for job titles"
-      aria-label="Search"
-      matInput
-      [formControl]="searchControl"
-      [matAutocomplete]="auto"
-    />
-    <button
-      mat-button
-      *ngIf="searchControl.value"
-      matSuffix
-      mat-icon-button
-      aria-label="Clear"
-      (click)="clear()"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngIf="isLoading">
-        <mat-spinner diameter="17"></mat-spinner>
-      </mat-option>
-      <mat-option
-        *ngFor="let job of jobs$ | async"
-        [disabled]="job.isDisabled"
-        [value]="job.suggestion"
-        (onSelectionChange)="jobId = job.uuid"
+<mat-toolbar color="primary">
+  <span>Find job-related skills</span>
+  <span class="spacer"></span>
+  <span class="search-form">
+    <mat-form-field>
+      <input
+        type="text"
+        placeholder="Search for job titles"
+        aria-label="Search"
+        matInput
+        [formControl]="searchControl"
+        [matAutocomplete]="auto"
+      />
+      <button
+        mat-button
+        *ngIf="searchControl.value"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="clear()"
       >
-        {{ job.suggestion }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-</div>
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngIf="isLoading">
+          <mat-spinner diameter="17"></mat-spinner>
+        </mat-option>
+        <mat-option
+          *ngFor="let job of jobs$ | async"
+          [disabled]="job.isDisabled"
+          [value]="job.suggestion"
+          (onSelectionChange)="jobId = job.uuid"
+        >
+          {{ job.suggestion }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </span>
+</mat-toolbar>
 <app-skills *ngIf="jobId" [jobId]="jobId"></app-skills>

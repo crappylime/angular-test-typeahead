@@ -1,7 +1,23 @@
 table {
   width: 100%;
 
+  .mat-header-cell {
+    font-weight: bolder;
+  }
+
+  .mat-row:nth-child(even) {
+    background-color: whitesmoke;
+  }
+
   .mat-cell {
     padding-right: 100px;
   }
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50%;
+  width: 100%;
 }

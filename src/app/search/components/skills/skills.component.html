@@ -28,9 +28,11 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
 
-<mat-spinner *ngIf="isLoading; else loaded" diameter="17"></mat-spinner>
+<div *ngIf="isLoading; else loaded" class="center">
+  <mat-spinner diameter="45"></mat-spinner>
+</div>
 <ng-template #loaded>
-  <div *ngIf="(skills$ | async)?.length === 0">
+  <div *ngIf="(skills$ | async)?.length === 0" class="center">
     <p>No records found</p>
   </div>
 </ng-template>

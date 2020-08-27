@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { SearchComponent } from './components/search/search.component';
 import { SkillsComponent } from './components/skills/skills.component';
@@ -29,6 +30,7 @@ import { SkillsComponent } from './components/skills/skills.component';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    MatToolbarModule,
     ReactiveFormsModule
   ],
   declarations: [SearchComponent, SkillsComponent],
