@@ -42,7 +42,6 @@ describe('SearchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SearchComponent],
       imports: [SearchModule],
       providers: [{ provide: SearchService, useValue: searchServiceStub }]
     })
