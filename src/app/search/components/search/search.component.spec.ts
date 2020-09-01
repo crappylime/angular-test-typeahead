@@ -1,3 +1,4 @@
+//#region imports
 import { Component, DebugElement, Input } from '@angular/core';
 import {
   async,
@@ -16,6 +17,7 @@ import { SearchComponent } from './search.component';
 import { SearchService } from '../../search.service';
 import { SearchModule } from '../../search.module';
 import { SkillsComponent } from '../skills/skills.component';
+//#endregion
 
 @Component({ selector: 'app-skills', template: '' })
 class SkillsStubComponent {

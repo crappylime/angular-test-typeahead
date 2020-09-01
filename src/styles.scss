@@ -5,6 +5,10 @@ body {
   margin: 0;
 }
 
+.no-jasmine .jasmine_html-reporter {
+  display: none;
+}
+
 .basic-container {
   height: 100vh;
 }

@@ -1,3 +1,4 @@
+//#region imports
 import './polyfills';
 
 import { NgModule } from '@angular/core';
@@ -19,6 +20,7 @@ import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
+//#endregion
 
 declare var jasmine: { getEnv: () => any };
 
@@ -36,6 +38,7 @@ if (environment.stackblitzTests) {
   platformBrowserDynamic()
     .bootstrapModule(AppModule)
     .catch((err) => console.error(err));
+  document.body.className = 'no-jasmine';
   }
 
 function bootstrap() {
