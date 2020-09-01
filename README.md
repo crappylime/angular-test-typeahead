@@ -1,7 +1,7 @@
 # Simulating user DOM interaction in Angular unit tests <!-- omit in toc -->
 
 <a href="https://github.com/crappylime/angular-test-typeahead/commits/master"><img src="https://img.shields.io/github/last-commit/crappylime/angular-test-typeahead.svg?style=plasticr"/></a>
-[![license](https://img.shields.io/github/license/crappylime/angular-test-typeahead.svg)](https://github.com/crappylime/angular-test-typeahead/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/crappylime/angular-test-typeahead.svg)](https://github.com/crappylime/angular-test-typeahead/blob/master/LICENSE) [![StackBlitz](https://img.shields.io/badge/StackBlitz-Edit-blue)](https://stackblitz.com/github/crappylime/angular-test-typeahead) [![dependencies Status](https://david-dm.org/crappylime/angular-test-typeahead/status.svg)](https://david-dm.org/crappylime/angular-test-typeahead) [![devDependencies Status](https://david-dm.org/crappylime/angular-test-typeahead/dev-status.svg)](https://david-dm.org/crappylime/angular-test-typeahead?type=dev)
 
 Many components have complex interactions with the DOM elements described in their templates, causing HTML to appear and disappear as the component state changes, for example:
 
@@ -36,11 +36,11 @@ Here is the answer from the Angular testing documentation:
 
 ## Built With
 
-- [Angular v. 9.0.4](https://angular.io) - The web framework used
+- [Angular v. 10.0.14](https://angular.io) - The web framework used
 - [Node.js v. 10.16.3](https://nodejs.org) - JavaScript runtime built
 - [NPM v. 6.9.0](https://www.npmjs.com) - Dependency Management
-- [Karma v. 4.1.0](https://karma-runner.github.io/) - Test Runner
-- [Jasmine v. 3.4.0](https://jasmine.github.io/) - Testing Framework
+- [Karma v. 5.0.0](https://karma-runner.github.io/) - Test Runner
+- [Jasmine v. 3.5.0](https://jasmine.github.io/) - Testing Framework
 
 ## Getting Started
 
@@ -73,9 +73,21 @@ Here is the answer from the Angular testing documentation:
 
 4.  Run tests
 
-        ```sh
-        $ npm test
-        ```
+    ```sh
+    $ npm test
+    ```
+
+5.  You can also run tests in the headless mode
+
+    ```sh
+    $ npm test:ci
+    ```
+
+6.  Or run the app
+
+    ```sh
+    $ npm start
+    ```
 
     </details>
 
@@ -85,6 +97,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-- [Angular Testing Guide](https://angular.io/guide/testing)
+- Component Testing Scenarios from [Angular Testing Guide](https://angular.io/guide/testing-components-scenarios)
 - Open Skills API from [Data At Work](http://dataatwork.org/)
-- test 'cases' pattern from [Zack DeRose](https://blog.angularindepth.com/how-i-was-completely-wrong-about-setting-up-tearing-down-tests-d3f6501d1718)
+- test 'cases' pattern from [Zack DeRose](https://medium.com/angular-in-depth/how-i-was-completely-wrong-about-setting-up-tearing-down-tests-d3f6501d1718)
