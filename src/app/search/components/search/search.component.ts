@@ -1,3 +1,4 @@
+//#region imports
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
@@ -11,6 +12,7 @@ import {
 
 import { Job } from '../../models/job.model';
 import { SearchService } from '../../search.service';
+//#endregion
 
 @Component({
   selector: 'app-search',

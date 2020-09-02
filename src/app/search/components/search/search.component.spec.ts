@@ -34,13 +34,14 @@ describe('SearchComponent', () => {
     searchJobs: () => of([])
   };
 
-  // query helpers
+  //#region query helpers
   const query = <T>(selector: string): T =>
     fixture.nativeElement.querySelector(selector);
   const queryByCss = (selector: string): DebugElement =>
     fixture.debugElement.query(By.css(selector));
   const queryAllByCss = (selector: string): DebugElement[] =>
     fixture.debugElement.queryAll(By.css(selector));
+  //#endregion
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -186,30 +187,29 @@ describe('SearchComponent', () => {
         skillsEl = query('app-skills');
       });
 
-      it('skills are visible', fakeAsync(() => {
+      it('skills are visible', () => {
         expect(skillsEl).toBeTruthy();
-      }));
+      });
 
-      it('jobId changes after selecting another option', fakeAsync(() => {
+      it('jobId changes after selecting another option', () => {
         expect(component.jobId).toEqual('1');
 
         searchInput.dispatchEvent(new Event('focusin'));
         optionDebugEls = queryAllByCss('.mat-option');
         optionDebugEls[1].triggerEventHandler('onSelectionChange', null);
         fixture.detectChanges();
-        skillsEl = query('app-skills');
 
         expect(component.jobId).toEqual('2');
-      }));
+      });
 
-      it('skills disappear after clearing', fakeAsync(() => {
+      it('skills disappear after clearing', () => {
         const clearDebugEl = queryByCss('.mat-icon-button');
         clearDebugEl.triggerEventHandler('click', null);
         fixture.detectChanges();
         skillsEl = query('app-skills');
 
         expect(skillsEl).toBeFalsy();
-      }));
+      });
     });
   });
 });
