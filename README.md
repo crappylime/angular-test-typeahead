@@ -1,7 +1,7 @@
 # Simulating user DOM interaction in Angular unit tests <!-- omit in toc -->
 
 <a href="https://github.com/crappylime/angular-test-typeahead/commits/master"><img src="https://img.shields.io/github/last-commit/crappylime/angular-test-typeahead.svg?style=plasticr"/></a>
-[![license](https://img.shields.io/github/license/crappylime/angular-test-typeahead.svg)](https://github.com/crappylime/angular-test-typeahead/blob/master/LICENSE) [![StackBlitz](https://img.shields.io/badge/StackBlitz-Edit-blue)](https://stackblitz.com/github/crappylime/angular-test-typeahead) [![dependencies Status](https://david-dm.org/crappylime/angular-test-typeahead/status.svg)](https://david-dm.org/crappylime/angular-test-typeahead) [![devDependencies Status](https://david-dm.org/crappylime/angular-test-typeahead/dev-status.svg)](https://david-dm.org/crappylime/angular-test-typeahead?type=dev)
+[![license](https://img.shields.io/github/license/crappylime/angular-test-typeahead.svg)](https://github.com/crappylime/angular-test-typeahead/blob/master/LICENSE) [![StackBlitz](https://img.shields.io/badge/StackBlitz-Edit-blue)](https://stackblitz.com/github/crappylime/angular-test-typeahead)
 
 Many components have complex interactions with the DOM elements described in their templates, causing HTML to appear and disappear as the component state changes, for example:
 
@@ -10,7 +10,7 @@ Many components have complex interactions with the DOM elements described in the
 - tables sorting / filtering / pagination.
 
 I will test here the user DOM interaction with the sample search component - an enhanced version of the [Angular Material Autocomplete](https://material.angular.io/components/autocomplete/overview).
-Check out this project on [stackblitz](https://stackblitz.com/github/crappylime/angular-test-typeahead).
+Check out this project on [StackBlitz](https://stackblitz.com/github/crappylime/angular-test-typeahead). Explanations of these tests can also be viewed on a [live YouTube recording](https://www.youtube.com/watch?v=v3ZVEU88-PA) (currently only in Polish).
 
 ## Table of contents <!-- omit in toc -->
 
